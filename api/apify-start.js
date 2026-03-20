@@ -15,15 +15,16 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: [username],
-          resultsLimit: 200,
-          scrapeTranscripts: true,
-          includeTranscript: true
+          resultsLimit: 200
         }),
       }
     );
 
     const data = await response.json();
-    if (!response.ok) return res.status(response.status).json(data);
+    if (!response.ok) {
+      const msg = typeof data?.error === 'string' ? data.error : JSON.stringify(data?.error || data);
+      return res.status(response.status).json({ error: msg });
+    }
 
     res.json({
       runId: data?.data?.id,
