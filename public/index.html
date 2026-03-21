@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reels Analyzer — Top 10 com Transcrição</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#07070C;--surface:rgba(255,255,255,0.025);--surface-hover:rgba(255,255,255,0.045);--border:rgba(255,255,255,0.055);--border-accent:rgba(221,42,123,0.22);--text:#fff;--text-dim:rgba(255,255,255,0.45);--text-muted:rgba(255,255,255,0.3);--accent:#DD2A7B;--ig:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF,#515BD4);--gold:linear-gradient(135deg,#F5A623,#F7DC6F);--silver:linear-gradient(135deg,#BDC3C7,#ECF0F1);--bronze:linear-gradient(135deg,#E67E22,#F0B27A);--radius:18px;--radius-sm:12px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans','Helvetica Neue',sans-serif;overflow-x:hidden}
+  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 25% 15%,rgba(221,42,123,0.06) 0%,transparent 50%),radial-gradient(ellipse at 75% 85%,rgba(81,91,212,0.04) 0%,transparent 50%);pointer-events:none;z-index:0}
+  .wrap{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:44px 24px 100px}
+  @keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.35)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .anim-up{animation:slideUp .7s ease both}
+  .header{text-align:center;margin-bottom:44px}
+  .header .logo-row{display:inline-flex;align-items:center;gap:14px;margin-bottom:16px}
+  .header .ig-icon{background:var(--ig);border-radius:var(--radius-sm);padding:11px;display:flex;align-items:center;justify-content:center}
+  .header h1{font-size:30px;font-weight:700;letter-spacing:-.6px;background:var(--ig);background-size:200% 200%;animation:gradShift 4s ease infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header p{color:var(--text-dim);font-size:15px;max-width:520px;margin:0 auto;line-height:1.65}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:28px}
+  .panel-label{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:1.6px;color:var(--text-muted);margin-bottom:12px;display:block}
+  .input-row{display:flex;gap:12px;align-items:stretch}
+  input[type="text"]{width:100%;padding:16px 16px 16px 46px;background:rgba(255,255,255,0.035);border:1px solid var(--border);border-radius:var(--radius-sm);color:#fff;font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:all .3s}
+  input:focus{box-shadow:0 0 0 2px rgba(221,42,123,0.4),0 0 28px rgba(221,42,123,0.08);border-color:rgba(221,42,123,0.3)}
+  input::placeholder{color:rgba(255,255,255,0.2)}
+  .input-wrap{flex:1;position:relative}
+  .input-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.22);display:flex}
+  .btn-go{padding:16px 32px;border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px;background:var(--ig);transition:all .3s}
+  .btn-go:disabled{background:rgba(255,255,255,0.05);cursor:not-allowed;opacity:.5}
+  .btn-go .spinner{animation:spin 1s linear infinite}
+  .btn-secondary{padding:9px 17px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:all .2s}
+  .btn-secondary:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8)}
+  .btn-export{padding:15px 34px;background:var(--ig);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+  .btn-reel{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(135deg,#F58529,#DD2A7B);border-radius:10px;color:#fff;text-decoration:none;font-size:13px;font-weight:600}
+  .steps{display:flex;flex-direction:column;gap:14px;margin-bottom:20px}
+  .step{display:flex;align-items:center;gap:10px;opacity:.28;transition:all .5s}
+  .step.active,.step.done{opacity:1}
+  .step-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);transition:all .5s}
+  .step.active .step-num{background:linear-gradient(135deg,#F58529,#DD2A7B);color:#fff}
+  .step.done .step-num{background:linear-gradient(135deg,#00C853,#00E676);color:#fff}
+  .step-label{font-size:13px;color:rgba(255,255,255,0.5)}
+  .step.active .step-label{font-weight:600;color:#fff}
+  .status-bar{display:flex;align-items:center;padding:14px 18px;background:rgba(221,42,123,0.055);border-radius:var(--radius-sm);border:1px solid rgba(221,42,123,0.1)}
+  .pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.5s ease-in-out infinite;margin-right:8px;flex-shrink:0}
+  .status-text{font-size:13px;color:rgba(255,255,255,0.7);font-family:'JetBrains Mono',monospace}
+  .error-box{background:rgba(255,59,48,0.07);border:1px solid rgba(255,59,48,0.18);border-radius:16px;padding:20px;margin-bottom:24px}
+  .error-box .title{font-weight:600;font-size:14px;color:#FF6B6B;margin-bottom:5px}
+  .error-box .msg{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center}
+  .stat-icon{font-size:20px;margin-bottom:4px}.stat-val{font-size:22px;font-weight:700;margin-bottom:2px}
+  .stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:500}
+  .results-list{display:flex;flex-direction:column;gap:10px}
+  .reel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all .35s}
+  .reel-card:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(221,42,123,0.12)}
+  .reel-card.expanded{background:var(--surface-hover);border-color:var(--border-accent)}
+  .reel-header{padding:18px 22px;display:flex;align-items:center;gap:14px}
+  .rank{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5)}
+  .rank-1{background:var(--gold);color:#1a1a2e}.rank-2{background:var(--silver);color:#1a1a2e}.rank-3{background:var(--bronze);color:#1a1a2e}
+  .reel-info{flex:1;min-width:0}
+  .reel-caption{font-size:14px;font-weight:500;color:rgba(255,255,255,0.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+  .reel-meta{display:flex;gap:14px;font-size:12px;color:var(--text-muted);flex-wrap:wrap}
+  .views-badge{background:linear-gradient(135deg,rgba(221,42,123,0.14),rgba(129,52,175,0.14));border:1px solid var(--border-accent);border-radius:10px;padding:7px 12px;display:flex;align-items:center;gap:6px;flex-shrink:0}
+  .views-badge span{font-size:14px;font-weight:700;color:var(--accent)}
+  .chevron{flex-shrink:0;transition:transform .3s;color:rgba(255,255,255,0.25)}.chevron.open{transform:rotate(180deg)}
+  .reel-body{padding:0 22px 22px;border-top:1px solid rgba(255,255,255,0.05)}
+  .reel-body .actions{padding-top:16px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap}
+  .section-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .section-bar{width:4px;height:18px;border-radius:2px}
+  .section-bar.caption{background:linear-gradient(180deg,#F58529,#DD2A7B)}
+  .section-bar.transcript{background:linear-gradient(180deg,#DD2A7B,#8134AF)}
+  .section-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.38)}
+  .content-box{background:rgba(0,0,0,0.25);border-radius:14px;padding:18px;border:1px solid rgba(255,255,255,0.035)}
+  .content-box p{margin:0;font-size:14px;color:rgba(255,255,255,0.72);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+  .content-box .empty{font-size:13px;color:rgba(255,255,255,0.32);font-style:italic}
+  .tx-source{display:inline-block;margin-top:10px;font-size:11px;padding:4px 10px;border-radius:6px;font-weight:500}
+  .tx-source.apify{background:rgba(245,133,41,0.12);color:#F58529}
+  .export-area{margin-top:28px;text-align:center}
+  .copy-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,200,83,0.15);border:1px solid rgba(0,200,83,0.3);border-radius:12px;padding:12px 24px;color:#00E676;font-size:14px;font-weight:600;z-index:999;animation:fadeIn .3s ease}
+  .hidden{display:none}
+  @media(max-width:700px){.input-row{flex-direction:column}.summary{grid-template-columns:1fr}.reel-header{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header anim-up">
+    <div class="logo-row">
+      <div class="ig-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="#fff" stroke="none"/></svg></div>
+      <h1>Reels Analyzer</h1>
+    </div>
+    <p>Cole o perfil do Instagram e receba o Top 10 reels com maior visualizações e a transcrição completa de cada um.</p>
+  </div>
+
+  <div class="panel anim-up" style="animation-delay:.1s">
+    <span class="panel-label">Perfil do Instagram</span>
+    <div class="input-row">
+      <div class="input-wrap">
+        <div class="input-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+        <input type="text" id="profileInput" placeholder="instagram.com/usuario ou @usuario">
+      </div>
+      <button class="btn-go" id="btnGo" onclick="runAnalysis()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Analisar
+      </button>
+    </div>
+  </div>
+
+  <div id="errorBox" class="error-box hidden"><div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px;line-height:1">⚠️</span><div><div class="title">Erro na análise</div><div class="msg" id="errorMsg"></div></div></div></div>
+  <div id="processingPanel" class="panel hidden">
+    <div class="steps" id="stepsContainer"></div>
+    <div class="status-bar"><span class="pulse-dot"></span><span class="status-text" id="statusText">Iniciando...</span></div>
+  </div>
+  <div id="resultsArea" class="hidden"></div>
+</div>
+<div id="toast" class="copy-toast hidden"></div>
+
+<script>
+const STEPS=['Iniciar coleta + transcrição','Aguardar (pode levar alguns minutos)','Baixar resultados','Filtrar Top 10 por views','Finalizar'];
+let processing=false;
+
+function $(id){return document.getElementById(id)}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function show(el){el.classList.remove('hidden')}
+function hide(el){el.classList.add('hidden')}
+function extractUsername(u){const c=u.trim().replace(/\/+$/,'');const m=c.match(/instagram\.com\/([^/?#]+)/);return m?m[1].replace('@',''):c.replace('@','')}
+function fv(n){if(!n)return'N/A';if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e3)return(n/1e3).toFixed(0)+'K';return n.toString()}
+function fd(d){if(!d)return'';try{return new Date(d).toLocaleDateString('pt-BR')}catch{return d}}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toast(m){const t=$('toast');t.textContent='✓ '+(m||'Copiado!');show(t);setTimeout(()=>hide(t),2200)}
+function setStatus(m){$('statusText').textContent=m}
+function renderSteps(c){$('stepsContainer').innerHTML=STEPS.map((l,i)=>{const s=i+1;const cls=c>s?'step done':c===s?'step active':'step';return`<div class="${cls}"><div class="step-num">${c>s?'✓':s}</div><span class="step-label">${l}</span></div>`}).join('')}
+function showError(m){$('errorMsg').textContent=m;show($('errorBox'))}
+function hideError(){hide($('errorBox'))}
+
+async function runAnalysis(){
+  if(processing)return;
+  const profile=$('profileInput').value.trim();
+  if(!profile){showError('Digite o perfil.');return}
+
+  processing=true;hideError();hide($('resultsArea'));$('resultsArea').innerHTML='';
+  show($('processingPanel'));
+  $('btnGo').disabled=true;
+  $('btnGo').innerHTML='<svg class="spinner" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Analisando...';
+
+  const username=extractUsername(profile);
+
+  try{
+    // 1 — Start Apify with download + transcription
+    renderSteps(1);setStatus(`Coletando e transcrevendo reels de @${username}...`);
+    const startRes=await fetch('/api/apify-start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username})});
+    const startData=await startRes.json();
+    if(!startRes.ok)throw new Error(startData.error||'Erro ao iniciar Apify');
+    const{runId,datasetId}=startData;
+    if(!runId)throw new Error('Falha ao iniciar coleta.');
+
+    // 2 — Poll until done
+    renderSteps(2);setStatus('Coletando e transcrevendo... Pode levar alguns minutos.');
+    while(true){
+      await sleep(5000);
+      const pollRes=await fetch(`/api/apify-status?runId=${runId}`);
+      const pollData=await pollRes.json();
+      const s=pollData.status;
+      if(s==='SUCCEEDED')break;
+      if(s==='FAILED'||s==='ABORTED'||s==='TIMED-OUT')throw new Error(`Apify: ${s}. Verifique se o perfil é público.`);
+      setStatus(s==='RUNNING'?'Coletando e transcrevendo reels...':s==='READY'?'Na fila, aguardando...':'Status: '+s);
+    }
+
+    // 3 — Fetch results
+    renderSteps(3);setStatus('Baixando resultados...');
+    const itemsRes=await fetch(`/api/apify-results?datasetId=${datasetId}`);
+    const items=await itemsRes.json();
+    if(!items||items.length===0)throw new Error('Nenhum reel encontrado. Perfil público?');
+
+    // 4 — Sort by views, pick top 10
+    renderSteps(4);setStatus(`${items.length} reels coletados. Filtrando top 10...`);
+    await sleep(500);
+
+    const top10=items.map(it=>({
+      id:it.id||it.shortCode||Math.random().toString(36).slice(2),
+      views:it.videoPlayCount||it.playCount||it.viewCount||it.videoViewCount||0,
+      likes:it.likesCount||it.likeCount||it.likes||0,
+      comments:it.commentsCount||it.commentCount||it.comments||0,
+      shares:it.sharesCount||it.shareCount||0,
+      caption:it.caption||it.text||'(sem legenda)',
+      transcription:it._transcript||it.transcript||it.transcription||null,
+      publishedAt:it.timestamp||it.takenAt||it.date||'',
+      url:it.url||(it.shortCode?`https://www.instagram.com/reel/${it.shortCode}/`:''),
+      username
+    })).sort((a,b)=>b.views-a.views).slice(0,10);
+
+    // 5 — Done
+    renderSteps(5);setStatus('Análise completa!');await sleep(400);
+    hide($('processingPanel'));
+    renderResults(top10,items.length);
+
+  }catch(err){
+    hide($('processingPanel'));showError(err.message||'Erro inesperado.');
+  }finally{
+    processing=false;$('btnGo').disabled=false;
+    $('btnGo').innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Analisar';
+  }
+}
+
+function renderResults(reels,totalScraped){
+  const area=$('resultsArea');
+  const tv=reels.reduce((s,r)=>s+r.views,0);
+  const wt=reels.filter(r=>r.transcription).length;
+  let h='';
+
+  h+=`<div class="summary anim-up">
+    <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-val">${totalScraped}</div><div class="stat-label">Reels coletados</div></div>
+    <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-val">${wt}/10</div><div class="stat-label">Transcritos</div></div>
+    <div class="stat-card"><div class="stat-icon">👁</div><div class="stat-val">${fv(tv)}</div><div class="stat-label">Views (top 10)</div></div>
+  </div>`;
+
+  h+='<div class="results-list">';
+  reels.forEach((r,i)=>{
+    const rc=i<3?` rank-${i+1}`:'';
+    const d=(0.1+i*0.05).toFixed(2);
+    h+=`<div class="reel-card anim-up" style="animation-delay:${d}s" id="card-${i}" onclick="togCard(${i})">
+      <div class="reel-header">
+        <div class="rank${rc}">${i+1}</div>
+        <div class="reel-info">
+          <div class="reel-caption">${esc((r.caption||'').slice(0,120))}</div>
+          <div class="reel-meta">${r.publishedAt?'<span>'+fd(r.publishedAt)+'</span>':''}<span>❤️ ${fv(r.likes)}</span><span>💬 ${fv(r.comments)}</span>${r.shares>0?'<span>↗️ '+fv(r.shares)+'</span>':''}</div>
+        </div>
+        <div class="views-badge"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DD2A7B" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><span>${fv(r.views)}</span></div>
+        <svg class="chevron" id="chev-${i}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="reel-body hidden" id="body-${i}">
+        <div class="actions">
+          ${r.url?`<a class="btn-reel" href="${r.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Abrir Reel</a>`:''}
+          <button class="btn-secondary" onclick="event.stopPropagation();copyReel(${i})"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copiar tudo</button>
+        </div>
+        ${(r.caption||'').length>120?`<div style="margin-bottom:16px"><div class="section-head"><div class="section-bar caption"></div><span class="section-label">Legenda completa</span></div><div class="content-box"><p>${esc(r.caption)}</p></div></div>`:''}
+        <div><div class="section-head"><div class="section-bar transcript"></div><span class="section-label">Transcrição</span></div>
+          <div class="content-box">${r.transcription?`<p>${esc(r.transcription)}</p><span class="tx-source apify">Transcrito via Apify</span>`:`<p class="empty">Transcrição não disponível para este reel.</p>`}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  h+='</div>';
+
+  h+=`<div class="export-area anim-up" style="animation-delay:.7s"><button class="btn-export" onclick="copyAll()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Copiar todas as transcrições</button></div>`;
+
+  area.innerHTML=h;show(area);window.__reels=reels;
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function togCard(i){const b=$('body-'+i),c=$('card-'+i),ch=$('chev-'+i);if(b.classList.contains('hidden')){b.classList.remove('hidden');c.classList.add('expanded');ch.classList.add('open')}else{b.classList.add('hidden');c.classList.remove('expanded');ch.classList.remove('open')}}
+function copyReel(i){const r=window.__reels[i];navigator.clipboard.writeText(`#${i+1} — ${fv(r.views)} views\n${r.caption||''}\nLink: ${r.url}\n\nTranscrição:\n${r.transcription||'(não disponível)'}`).then(()=>toast('Copiado!'))}
+function copyAll(){const t=window.__reels.map((r,i)=>`#${i+1} — ${fv(r.views)} views\n${r.caption||''}\nLink: ${r.url}\n\nTranscrição:\n${r.transcription||'(não disponível)'}\n\n${'—'.repeat(40)}\n`).join('\n');navigator.clipboard.writeText(t).then(()=>toast('Todas copiadas!'))}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!processing)runAnalysis()});
+</script>
+</body>
+</html>
