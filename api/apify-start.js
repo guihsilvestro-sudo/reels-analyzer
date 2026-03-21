@@ -15,10 +15,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           username: [username],
-          resultsLimit: 30,
-          downloadVideo: true,
-          scrapeTranscripts: true,
-          includeTranscript: true
+          resultsLimit: 30
         }),
       }
     );
