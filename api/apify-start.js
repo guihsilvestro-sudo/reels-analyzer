@@ -16,7 +16,9 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           username: [username],
           resultsLimit: 30,
-          scrapeTranscripts: true
+          downloadVideo: true,
+          scrapeTranscripts: true,
+          includeTranscript: true
         }),
       }
     );
