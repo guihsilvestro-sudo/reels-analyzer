@@ -125,7 +125,7 @@
 <div id="toast" class="copy-toast hidden"></div>
 
 <script>
-const STEPS=['Iniciar coleta','Coletar reels (1–5 min)','Baixar resultados','Filtrar Top 10','Transcrever áudio','Finalizar'];
+const STEPS=['Coletar reels','Aguardar coleta','Baixar resultados','Filtrar Top 10','Transcrever Top 10','Aguardar transcrição','Finalizar'];
 let processing=false;
 
 function $(id){return document.getElementById(id)}
@@ -156,7 +156,7 @@ async function runAnalysis(){
   const username=extractUsername(profile);
 
   try{
-    // 1 — Start Apify
+    // 1 — Start Apify (fast, no video download)
     renderSteps(1);setStatus(`Iniciando coleta de @${username}...`);
     const startRes=await fetch('/api/apify-start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username})});
     const startData=await startRes.json();
@@ -165,7 +165,7 @@ async function runAnalysis(){
     if(!runId)throw new Error('Falha ao iniciar coleta.');
 
     // 2 — Poll Apify
-    renderSteps(2);setStatus('Coletando reels... Pode levar de 1 a 5 minutos.');
+    renderSteps(2);setStatus('Coletando reels...');
     while(true){
       await sleep(4000);
       const pollRes=await fetch(`/api/apify-status?runId=${runId}`);
@@ -176,19 +176,11 @@ async function runAnalysis(){
       setStatus(s==='RUNNING'?'Coletando reels...':s==='READY'?'Na fila...':'Status: '+s);
     }
 
-    // 3 — Fetch results (enriched by backend)
-    renderSteps(3);setStatus('Baixando e analisando resultados...');
+    // 3 — Fetch results
+    renderSteps(3);setStatus('Baixando resultados...');
     const itemsRes=await fetch(`/api/apify-results?datasetId=${datasetId}`);
     const items=await itemsRes.json();
     if(!items||items.length===0)throw new Error('Nenhum reel encontrado. Perfil público?');
-
-    // Show debug info from first item
-    const debugInfo = items[0]?._debug;
-    if(debugInfo){
-      const da=$('debugArea');
-      da.innerHTML=`<div class="debug-box"><strong>🔍 Diagnóstico (1º reel):</strong>\n\nCampos: ${debugInfo.keys.join(', ')}\n\nBusca de vídeo:\n${debugInfo.videoLog.join('\n') || 'Nenhuma URL de vídeo encontrada'}\n\nAmostra:\n${JSON.stringify(debugInfo.sample, null, 2)}</div>`;
-      show(da);
-    }
 
     // 4 — Sort & pick top 10
     renderSteps(4);setStatus(`${items.length} reels. Filtrando top 10...`);
@@ -209,51 +201,54 @@ async function runAnalysis(){
       username
     })).sort((a,b)=>b.views-a.views).slice(0,10);
 
-    // 5 — Transcribe via AssemblyAI
+    // 5 — Send top 10 URLs for transcription via Apify (with downloadVideo)
     renderSteps(5);
-    const need=top10.filter(r=>!r.transcription&&r.videoUrl);
-    const have=top10.filter(r=>r.transcription).length;
-    const noVideo=top10.filter(r=>!r.transcription&&!r.videoUrl).length;
+    const reelUrls=top10.filter(r=>r.url).map(r=>r.url);
 
-    setStatus(`${have} com transcrição, ${need.length} para transcrever, ${noVideo} sem vídeo`);
+    if(reelUrls.length>0){
+      setStatus(`Enviando ${reelUrls.length} reels para transcrição...`);
+      const txStartRes=await fetch('/api/apify-transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reelUrls})});
+      const txStartData=await txStartRes.json();
 
-    if(need.length>0){
-      setStatus(`Enviando ${need.length} vídeos para AssemblyAI...`);
-
-      // Start ALL transcriptions in parallel
-      const jobs=await Promise.all(need.map(async reel=>{
-        try{
-          const r=await fetch('/api/transcribe-start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audioUrl:reel.videoUrl})});
-          const d=await r.json();
-          if(d.error) console.warn('AssemblyAI start error:', d.error);
-          return{reel,txId:d.transcriptId||null,error:d.error||null};
-        }catch(e){return{reel,txId:null,error:e.message}}
-      }));
-
-      // Poll all in parallel
-      let done=0;
-      const total=jobs.filter(j=>j.txId).length;
-      await Promise.all(jobs.map(async job=>{
-        if(!job.txId)return;
+      if(txStartRes.ok&&txStartData.runId){
+        // 6 — Poll transcription run
+        renderSteps(6);
+        setStatus('Transcrevendo os Top 10... Pode levar alguns minutos.');
         while(true){
-          await sleep(3000);
-          try{
-            const r=await fetch(`/api/transcribe-status?transcriptId=${job.txId}`);
-            const d=await r.json();
-            if(d.status==='completed'){job.reel.transcription=d.text;job.reel.txSource='assembly';break}
-            if(d.status==='error'){console.warn('AssemblyAI error for',job.txId);break}
-          }catch{break}
+          await sleep(4000);
+          const pollRes=await fetch(`/api/apify-status?runId=${txStartData.runId}`);
+          const pollData=await pollRes.json();
+          const s=pollData.status;
+          if(s==='SUCCEEDED')break;
+          if(s==='FAILED'||s==='ABORTED'||s==='TIMED-OUT'){setStatus('Transcrição falhou, mostrando sem.');break;}
+          setStatus(s==='RUNNING'?'Transcrevendo...':'Status: '+s);
         }
-        done++;
-        setStatus(`Transcrevendo... ${done}/${total} concluídos`);
-      }));
 
-      setStatus('Transcrições finalizadas!');
+        // Fetch transcription results and merge
+        const txItemsRes=await fetch(`/api/apify-results?datasetId=${txStartData.datasetId}`);
+        const txItems=await txItemsRes.json();
+
+        if(txItems&&txItems.length>0){
+          for(const reel of top10){
+            const match=txItems.find(tx=>{
+              const txUrl=tx.url||'';
+              const txCode=tx.shortCode||tx.code||'';
+              return (reel.url&&txUrl&&txUrl.includes(reel.url.split('/').filter(Boolean).pop()))||(txCode&&reel.url&&reel.url.includes(txCode));
+            });
+            if(match){
+              const tx=match._transcript||match.transcript||match.transcription||null;
+              if(tx){reel.transcription=tx;reel.txSource='apify';}
+            }
+          }
+        }
+      } else {
+        setStatus('Não foi possível iniciar transcrição.');
+      }
     }
     await sleep(400);
 
-    // 6 — Done
-    renderSteps(6);setStatus('Análise completa!');await sleep(400);
+    // 7 — Done
+    renderSteps(7);setStatus('Análise completa!');await sleep(400);
     hide($('processingPanel'));
     renderResults(top10,items.length);
 
@@ -283,8 +278,8 @@ function renderResults(reels,totalScraped){
   reels.forEach((r,i)=>{
     const rc=i<3?` rank-${i+1}`:'';
     const d=(0.1+i*0.05).toFixed(2);
-    const src=r.txSource==='apify'?'<span class="tx-source apify">Legenda Instagram</span>':r.txSource==='assembly'?'<span class="tx-source assembly">Transcrito via AssemblyAI</span>':'';
-    const noVidMsg=!r.videoUrl?'Sem URL de vídeo nos dados do Apify.':'URL encontrada mas transcrição falhou.';
+    const src=r.txSource==='apify'?'<span class="tx-source apify">Transcrito via Apify</span>':r.txSource==='assembly'?'<span class="tx-source assembly">Transcrito via AssemblyAI</span>':'';
+    const noVidMsg='Transcrição não disponível para este reel.';
     h+=`<div class="reel-card anim-up" style="animation-delay:${d}s" id="card-${i}" onclick="togCard(${i})">
       <div class="reel-header">
         <div class="rank${rc}">${i+1}</div>
